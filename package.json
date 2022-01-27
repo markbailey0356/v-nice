@@ -1,0 +1,35 @@
+{
+  "type": "module",
+  "name": "v-nice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^3.2.29"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.0.0-rc.18",
+    "ava": "^4.0.1",
+    "browser-env": "^3.3.0",
+    "sinon": "^12.0.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5"
+  },
+  "ava": {
+    "require": [
+      "./tests/_setup-browser-env.cjs"
+    ],
+    "extensions": {
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--loader=ts-node/esm",
+      "--experimental-specifier-resolution=node"
+    ]
+  }
+}

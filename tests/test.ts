@@ -1,15 +1,28 @@
 import test from 'ava';
 import {mount} from '@vue/test-utils';
-import directive from '../src/directive';
+import { createDirective } from '../src/directive';
 import sinon from 'sinon';
 
 test('calls the mounted hook', async t => {
-    const spy = sinon.spy(directive, 'mounted');
+    const directive = sinon.spy(createDirective(), 'mounted');
     const TestComponent = {
         template: `
           <div v-nice></div>`,
-        directives: {nice: spy},
+        directives: {nice: directive},
     };
     mount(TestComponent);
-    t.true(spy.calledOnce);
+    t.true(directive.calledOnce);
+})
+
+test('calls animate on directed element', async t => {
+    const animate = sinon.spy();
+    const directive = createDirective({animate});
+    const TestComponent = {
+        template: `
+          <div v-nice></div>`,
+        directives: {nice: directive},
+    };
+    const wrapper = mount(TestComponent);
+    const el = wrapper.element;
+    t.true(animate.calledWith(el));
 })

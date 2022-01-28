@@ -1,22 +1,52 @@
 <template>
-  <main>
-    <section v-for="i in 3" v-nice>
-      <div class="body">
-        <h2></h2>
-        <p></p>
-        <p></p>
-        <button></button>
-      </div>
-      <img src="./images/abstract.jpg" width="1528" height="1161">
-    </section>
-  </main>
+  <aside class="controls" v-nice>
+    <h1>v-nice</h1>
+    <button @click="key++">Play</button>
+    <div class="zoom-controls">
+      <button @click="zoomIn">+</button>
+      <button @click="zoomOut">-</button>
+    </div>
+  </aside>
+  <transition mode="out-in" name="fade">
+    <main :key="key + zoom" :style="{fontSize}">
+      <section v-for="i in 3" v-nice>
+        <div class="body">
+          <h2></h2>
+          <p></p>
+          <p></p>
+          <button></button>
+        </div>
+        <img src="./images/abstract.jpg" width="1528" height="1161">
+      </section>
+    </main>
+  </transition>
 </template>
 
 <script setup lang="ts">
 import vNice from '../src/directive';
+import {computed, ref} from "vue";
+
+const key = ref(0);
+const zoomStep = 1.25;
+const zoom = ref(-1);
+const zoomMin = -4;
+const zoomMax = 4;
+const zoomIn = () => {
+  zoom.value = Math.max(zoomMin, Math.min(zoom.value+1, zoomMax));
+}
+const zoomOut = () => {
+  zoom.value = Math.max(zoomMin, Math.min(zoom.value-1, zoomMax));
+}
+const fontSize = computed(() => {
+  return zoomStep ** zoom.value + 'rem';
+})
 </script>
 
 <style scoped lang="scss">
+h1 {
+  white-space: nowrap;
+}
+
 h2 {
   font-size: 1.5rem;
   background-color: var(--blue);
@@ -59,6 +89,17 @@ button {
   border: 0;
   border-radius: .2em;
   padding: 0;
+  cursor: pointer;
+
+  transition: transform 0.15s ease;
+  will-change: transform;
+  &:hover, &:focus {
+    outline: none;
+    transform: scale(1.05);
+  }
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 img {
@@ -72,12 +113,11 @@ img {
 main {
   display: flex;
   flex-wrap: wrap;
-  --gap: min(6vw, 3em);
-  gap: var(--gap);
+  gap: var(--gap-large);
   justify-content: center;
-  padding: var(--gap);
-  min-height: 100%;
+  padding: var(--gap-large);
   align-content: space-evenly;
+  flex-grow: 1;
 
   > * {
     flex: 1 1 auto;
@@ -88,8 +128,7 @@ section {
   display: flex;
   flex-wrap: wrap-reverse;
   justify-content: center;
-  --gap: min(5vw, 2em);
-  gap: var(--gap);
+  gap: var(--gap-base);
   flex-basis: var(--measure);
 
   .body {
@@ -106,7 +145,57 @@ section {
 
   > * {
     min-width: min(40ch, 100%);
-    max-width: var(--measure);
+    max-width: min(var(--measure), 100%);
   }
 }
+
+.controls {
+  background-color: var(--black);
+  border-bottom: 2px solid var(--dark);
+  padding: var(--gap-small) var(--gap-large);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-controls);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--gap-base);
+
+  > * {
+    margin: 0;
+  }
+
+  @media (max-width: 60ch) {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.zoom-controls {
+  font-size: 1.25em;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--gap-x-small);
+
+  > * {
+    margin: 0;
+  }
+
+  button {
+    background-color: var(--dark);
+    aspect-ratio: 1 / 1;
+    color: white;
+    min-width: initial;
+    height: 2em;
+  }
+}
+
+.fade-leave-active {
+  transition: opacity 0.15s linear;
+}
+
+.fade-leave-to {
+  opacity: 0;
+}
+
 </style>

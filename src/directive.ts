@@ -1,16 +1,17 @@
 import {ObjectDirective} from "vue";
-import {animate as motionAnimate} from 'motion';
 
 interface CreateDirectiveOptions {
-    animate?: typeof motionAnimate,
+    animate?: (el: Animatable, ...args: Parameters<Animatable['animate']>) => ReturnType<Animatable['animate']>
 }
 
-export const createDirective = (options: CreateDirectiveOptions = {}): ObjectDirective => {
-    const {animate = motionAnimate} = options;
+const defaultAnimate: CreateDirectiveOptions["animate"] = (el, ...args) => el.animate(...args);
+
+export const createDirective = (options: CreateDirectiveOptions = {}): ObjectDirective<Element> => {
+    const {animate = defaultAnimate} = options;
 
     return {
         mounted: (el) => {
-            animate(el);
+            animate(el, {opacity: 0, offset: 0}, {duration: 500});
         }
     }
 }

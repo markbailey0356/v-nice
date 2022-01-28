@@ -4,7 +4,8 @@ import { createDirective } from '../src/directive';
 import sinon from 'sinon';
 
 test('calls the mounted hook', async t => {
-    const directive = sinon.spy(createDirective(), 'mounted');
+    const animate = sinon.spy();
+    const directive = sinon.spy(createDirective({animate}), 'mounted');
     const TestComponent = {
         template: `
           <div v-nice></div>`,
@@ -24,5 +25,5 @@ test('calls animate on directed element', async t => {
     };
     const wrapper = mount(TestComponent);
     const el = wrapper.element;
-    t.true(animate.calledWith(el));
+    t.true(animate.calledWith(el, sinon.match({opacity: 0, offset: 0})));
 })

@@ -27,4 +27,13 @@ html, body, #app {
     box-sizing: border-box;
 }
 
+::-webkit-scrollbar {
+    background-color: var(--dark);
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--blue);
+    border-radius: 999px;
+    border: 2px solid var(--dark);
+}
+
 

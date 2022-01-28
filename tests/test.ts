@@ -25,5 +25,23 @@ test('calls animate on directed element', async t => {
     };
     const wrapper = mount(TestComponent);
     const el = wrapper.element;
-    t.true(animate.calledWith(el, sinon.match({opacity: 0, offset: 0})));
+    t.true(animate.calledWith(el));
+})
+
+test('waits for images to load before animating', async t => {
+    const animate = sinon.spy();
+    const directive = createDirective({animate});
+    const onload = sinon.spy();
+    const TestComponent = {
+        template: `
+          <img @load="onload" v-nice>`,
+        directives: {nice: directive},
+        methods: { onload }
+    };
+    const wrapper = mount(TestComponent);
+    const el = wrapper.element;
+    await wrapper.trigger('load');
+    t.true(onload.called);
+    t.true(animate.calledWith(el));
+    t.true(animate.calledAfter(onload));
 })

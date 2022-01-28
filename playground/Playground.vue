@@ -7,7 +7,7 @@
         <p></p>
         <button></button>
       </div>
-      <img>
+      <img src="./images/abstract.jpg" width="1528" height="1161">
     </section>
   </main>
 </template>
@@ -64,6 +64,7 @@ button {
 img {
   display: block;
   background-color: var(--blue);
+  height: auto;
 
   border-radius: .5em;
 }

@@ -1,4 +1,5 @@
 import {ObjectDirective} from "vue";
+import {sortBy} from 'lodash-es';
 
 interface CreateDirectiveOptions {
     animate?: (el: Animatable, ...args: Parameters<Animatable['animate']>) => ReturnType<Animatable['animate']>
@@ -24,6 +25,13 @@ export const createDirective = (options: CreateDirectiveOptions = {}): ObjectDir
 
             if (binding.modifiers.stagger) {
                 options.stagger = 200;
+            }
+
+            if (binding.modifiers.order) {
+                options.els = sortBy(options.els, el => {
+                    const rect = el.getBoundingClientRect();
+                    return rect.x + rect.y;
+                })
             }
 
             const {els, stagger, duration} = options;

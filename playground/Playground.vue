@@ -9,7 +9,7 @@
   </aside>
   <transition mode="out-in" name="fade">
     <main :key="key + zoom" :style="{fontSize}">
-      <section v-for="i in 3" :key="i" v-nice.leaves.stagger>
+      <section v-for="i in 3" :key="i" v-nice.leaves.stagger.order>
         <div class="body">
           <h2></h2>
           <p></p>

@@ -10,14 +10,37 @@ export const createDirective = (options: CreateDirectiveOptions = {}): ObjectDir
     const {animate = defaultAnimate} = options;
 
     return {
-        mounted: async (el) => {
-            const animation = animate(el, {opacity: 0, offset: 0}, {duration: 500});
-            animation.pause();
-            const images = getImagesOfElement(el);
-            if (images.length) {
-                await loadImageElements(images);
+        mounted: async (el, binding) => {
+            const options = {
+                els: new Array<Element>(),
+                stagger: 0,
+                duration: 500,
             }
-            animation.play();
+            if (binding.modifiers.leaves) {
+                options.els.push(...Array.from(el.querySelectorAll('img, h1, h2, h3, h4, h5, h6, p, button, a')));
+            } else {
+                options.els.push(el);
+            }
+
+            if (binding.modifiers.stagger) {
+                options.stagger = 200;
+            }
+
+            const {els, stagger, duration} = options;
+            els.forEach(async (el, index) => {
+                const delay = stagger * index;
+                const animation = animate(
+                    el,
+                    {opacity: 0, offset: 0},
+                    {duration, delay, fill: 'backwards'}
+                );
+                animation.pause();
+                const images = getImagesOfElement(el);
+                if (images.length) {
+                    await loadImageElements(images);
+                }
+                animation.play();
+            });
         }
     }
 }

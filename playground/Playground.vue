@@ -9,14 +9,14 @@
   </aside>
   <transition mode="out-in" name="fade">
     <main :key="key + zoom" :style="{fontSize}">
-      <section v-for="i in 3" v-nice>
+      <section v-for="i in 3" :key="i" v-nice.leaves.stagger>
         <div class="body">
           <h2></h2>
           <p></p>
           <p></p>
           <button></button>
         </div>
-        <img src="./images/abstract.jpg" width="1528" height="1161">
+        <img src="./images/abstract.jpg" width="1528" height="1161" alt="abstract">
       </section>
     </main>
   </transition>

@@ -10,12 +10,15 @@ const defaultAnimate: CreateDirectiveOptions["animate"] = (el, ...args) => el.an
 export const createDirective = (options: CreateDirectiveOptions = {}): ObjectDirective<Element> => {
     const {animate = defaultAnimate} = options;
 
+    let nextAnimationTime = document.timeline.currentTime;
+
     return {
         mounted: async (el, binding) => {
             const options = {
                 els: new Array<Element>(),
                 stagger: 0,
                 duration: 500,
+                groupStagger: 0,
             }
             if (binding.modifiers.leaves) {
                 options.els.push(...Array.from(el.querySelectorAll('img, h1, h2, h3, h4, h5, h6, p, button, a')));
@@ -33,10 +36,16 @@ export const createDirective = (options: CreateDirectiveOptions = {}): ObjectDir
                     return rect.x + rect.y;
                 })
             }
+            if (binding.modifiers['group-stagger'] || binding.modifiers.groupStagger) {
+                options.groupStagger = 200;
+            }
 
-            const {els, stagger, duration} = options;
+            const {els, stagger, duration, groupStagger} = options;
+            const currentTime = document.timeline.currentTime;
+            const groupDelay = Math.max(0, nextAnimationTime - currentTime);
+            nextAnimationTime = Math.max(currentTime, nextAnimationTime) + groupStagger;
             els.forEach(async (el, index) => {
-                const delay = stagger * index;
+                const delay = groupDelay + stagger * index;
                 const animation = animate(
                     el,
                     {opacity: 0, offset: 0},
